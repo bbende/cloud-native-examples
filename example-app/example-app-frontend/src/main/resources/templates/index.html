@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Messages</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <h1>Messages</h1>
+    <ul>
+        <li th:each="message: ${messages}" th:text="${message.text}" />
+    </ul>
+    <a href="#" th:href="@{/messages/new}" role="button">New Message</a>
+</body>
+</html>

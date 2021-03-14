@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>New Message</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <h1>New Message</h1>
+    <form action="#" th:action="@{/messages}" th:object="${message}" method="post">
+        <table>
+            <tr>
+                <td>
+                    <input type="text" class="form-control" id="text" th:field="*{text}">
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <br/>
+    <a href="#" th:href="@{/}" role="button"><< Back</a>
+</body>
+</html>
