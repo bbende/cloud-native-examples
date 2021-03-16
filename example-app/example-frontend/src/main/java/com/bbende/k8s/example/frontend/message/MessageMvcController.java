@@ -1,7 +1,6 @@
 package com.bbende.k8s.example.frontend.message;
 
 import com.bbende.k8s.example.api.Message;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,15 +11,18 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @Controller
-public class MessageController {
+public class MessageMvcController {
 
-    @Autowired
-    private MessageService messageService;
+    private MessageClientService messageClientService;
+
+    public MessageMvcController(final MessageClientService messageClientService) {
+        this.messageClientService = messageClientService;
+    }
 
     @GetMapping("/")
     public ModelAndView getAll() {
         try {
-            final List<Message> messages = messageService.getAll();
+            final List<Message> messages = messageClientService.getAll();
             final ModelMap modelMap = new ModelMap("messages", messages);
             return new ModelAndView("index", modelMap);
         } catch (Throwable t) {
@@ -39,11 +41,12 @@ public class MessageController {
     public ModelAndView createMessage(
             @ModelAttribute(name = "message") Message message) {
         try {
-            messageService.add(message);
+            messageClientService.add(message);
             return new ModelAndView("redirect:/");
         } catch (Throwable t) {
             final ModelMap modelMap = new ModelMap("error", t.getMessage());
             return new ModelAndView("error", modelMap);
         }
     }
+
 }

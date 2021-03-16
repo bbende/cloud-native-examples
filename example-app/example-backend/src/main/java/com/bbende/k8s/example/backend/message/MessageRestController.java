@@ -1,7 +1,6 @@
 package com.bbende.k8s.example.backend.message;
 
 import com.bbende.k8s.example.api.Message;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,22 +11,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/messages")
-public class MessageController {
+public class MessageRestController {
 
-    private final MessageService messageService;
+    private final MessageStore messageStore;
 
-    public MessageController(final MessageService messageService) {
-        this.messageService = messageService;
+    public MessageRestController(final MessageStore messageStore) {
+        this.messageStore = messageStore;
     }
 
     @PostMapping
     public Message createMessage(@RequestBody final Message message) {
-        return messageService.add(message);
+        return messageStore.add(message);
     }
 
     @GetMapping
     public List<Message> getMessages() {
-        return messageService.getAll();
+        return messageStore.getAll();
     }
 
 }

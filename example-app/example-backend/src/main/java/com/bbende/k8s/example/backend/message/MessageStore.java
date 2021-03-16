@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-public class MessageService {
+public class MessageStore {
 
     private Set<Message> messages = new LinkedHashSet<>();
 
