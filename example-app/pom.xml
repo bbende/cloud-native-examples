@@ -16,8 +16,9 @@
     <name>Example App</name>
 
     <modules>
-      <module>example-app-frontend</module>     
-      <module>example-app-backend</module>
+      <module>example-frontend</module>     
+      <module>example-backend</module>
+      <module>example-api</module>
     </modules>
 
 </project>
