@@ -21,4 +21,83 @@
       <module>example-api</module>
     </modules>
 
+    <properties>
+        <java.version>11</java.version>
+
+        <!-- Properties for spring-boot:build-image execution -->
+        <image.skip>true</image.skip>
+        <image.publish>false</image.publish>
+        <image.name>bbende/${project.artifactId}</image.name>
+        <image.tag>${project.version}</image.tag>
+        <image.publish.registry.url>https://index.docker.io/v1/</image.publish.registry.url>
+        <image.publish.registry.username>bbende</image.publish.registry.username>
+        <!--suppress UnresolvedMavenProperty -->
+        <image.publish.registry.password>${env.DOCKERHUB_TOKEN}</image.publish.registry.password>
+        <image.publish.registry.token></image.publish.registry.token>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Attaches spring-boot:build-image to the package phase with skip=true by default,
+                     use -Pimage-build or -Pimage-publish to activate the execution -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>build-image</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>build-image</goal>
+                            </goals>
+                            <configuration>
+                                <skip>${image.skip}</skip>
+                                <image>
+                                    <name>${image.name}:${image.tag}</name>
+                                    <publish>${image.publish}</publish>
+                                    <env>
+                                        <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
+                                    </env>
+                                </image>
+                                <docker>
+                                    <publishRegistry>
+                                        <url>${image.publish.registry.url}</url>
+                                        <username>${image.publish.registry.username}</username>
+                                        <password>${image.publish.registry.password}</password>
+                                        <token>${image.publish.registry.token}</token>
+                                    </publishRegistry>
+                                </docker>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <!-- Build images, but don't publish -->
+        <profile>
+            <id>build-image</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <image.skip>false</image.skip>
+            </properties>
+        </profile>
+        <!-- Build images and publish -->
+        <profile>
+            <id>publish-image</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <image.skip>false</image.skip>
+                <image.publish>true</image.publish>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>

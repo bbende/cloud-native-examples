@@ -7,14 +7,12 @@
 		<artifactId>example-app</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>com.bbende.k8s</groupId>
+
 	<artifactId>example-frontend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Example App Frontend</name>
 	<description>The frontend of the example app</description>
-	<properties>
-		<java.version>11</java.version>
-	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -29,7 +27,7 @@
 			<artifactId>example-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-
+		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
