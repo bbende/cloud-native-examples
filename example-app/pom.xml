@@ -23,15 +23,14 @@
 
     <properties>
         <java.version>11</java.version>
-
-        <!-- Properties for spring-boot:build-image execution -->
+        <!-- Properties for spring-boot:build-image execution defaulting to docker hub -->
         <image.skip>true</image.skip>
         <image.publish>false</image.publish>
-        <image.name>bbende/${project.artifactId}</image.name>
+        <image.prefix>docker.io</image.prefix>
+        <image.name>${image.prefix}/bbende/${project.artifactId}</image.name>
         <image.tag>${project.version}</image.tag>
         <image.publish.registry.url>https://index.docker.io/v1/</image.publish.registry.url>
         <image.publish.registry.username>bbende</image.publish.registry.username>
-        <!--suppress UnresolvedMavenProperty -->
         <image.publish.registry.password>${env.DOCKERHUB_TOKEN}</image.publish.registry.password>
         <image.publish.registry.token></image.publish.registry.token>
     </properties>
@@ -96,6 +95,19 @@
             <properties>
                 <image.skip>false</image.skip>
                 <image.publish>true</image.publish>
+            </properties>
+        </profile>
+        <!-- Use GitHub Container Registry -->
+        <profile>
+            <id>github-packages</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <image.prefix>ghcr.io</image.prefix>
+                <image.publish.registry.url>https://ghcr.io</image.publish.registry.url>
+                <image.publish.registry.username>bbende</image.publish.registry.username>
+                <image.publish.registry.password>${env.GITHUB_PACKAGES_TOKEN}</image.publish.registry.password>
             </properties>
         </profile>
     </profiles>
