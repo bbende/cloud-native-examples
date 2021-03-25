@@ -1,2 +1,3 @@
-# k8s-playground
-Respository to experiment with Kubernetes.
+# Cloud Native Examples
+
+Cloud native examples with Spring Boot, Docker, and Kubernetes.
