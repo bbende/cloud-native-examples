@@ -31,6 +31,7 @@
         <image.tag>${project.version}</image.tag>
         <image.publish.registry.url>https://index.docker.io/v1/</image.publish.registry.url>
         <image.publish.registry.username>bbende</image.publish.registry.username>
+        <!--suppress UnresolvedMavenProperty -->
         <image.publish.registry.password>${env.DOCKERHUB_TOKEN}</image.publish.registry.password>
         <image.publish.registry.token></image.publish.registry.token>
     </properties>
@@ -107,6 +108,7 @@
                 <image.prefix>ghcr.io</image.prefix>
                 <image.publish.registry.url>https://ghcr.io</image.publish.registry.url>
                 <image.publish.registry.username>bbende</image.publish.registry.username>
+                <!--suppress UnresolvedMavenProperty -->
                 <image.publish.registry.password>${env.GITHUB_PACKAGES_TOKEN}</image.publish.registry.password>
             </properties>
         </profile>
