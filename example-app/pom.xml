@@ -11,7 +11,7 @@
 
     <groupId>com.bbende.k8s</groupId>
     <artifactId>example-app</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Example App</name>
 
@@ -142,6 +142,24 @@
                 <image.publish.registry.username>_json_key</image.publish.registry.username>
                 <!--suppress UnresolvedMavenProperty -->
                 <image.publish.registry.password>${env.GOOGLE_JSON_KEY}</image.publish.registry.password>
+            </properties>
+        </profile>
+        <!-- Publish to AWS Elastic Container Registry -->
+        <profile>
+            <id>ecr</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Update to custom alias once approved -->
+                <ecr.registry.id>e5j7l2s3</ecr.registry.id>
+                <image.skip>false</image.skip>
+                <image.publish>true</image.publish>
+                <image.name>public.ecr.aws/${ecr.registry.id}/${project.artifactId}</image.name>
+                <image.publish.registry.url>https://public.ecr.aws</image.publish.registry.url>
+                <image.publish.registry.username>AWS</image.publish.registry.username>
+                <!--suppress UnresolvedMavenProperty -->
+                <image.publish.registry.password>${env.ECR_LOGIN_PASSWORD}</image.publish.registry.password>
             </properties>
         </profile>
     </profiles>
