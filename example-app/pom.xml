@@ -23,23 +23,16 @@
 
     <properties>
         <java.version>11</java.version>
-        <!-- Properties for spring-boot:build-image execution defaulting to docker hub -->
         <image.skip>true</image.skip>
         <image.publish>false</image.publish>
-        <image.name>docker.io/bbende/${project.artifactId}</image.name>
+        <image.name>${project.artifactId}</image.name>
         <image.tag>${project.version}</image.tag>
-        <image.publish.registry.url>https://index.docker.io/v1/</image.publish.registry.url>
-        <image.publish.registry.username>bbende</image.publish.registry.username>
-        <!--suppress UnresolvedMavenProperty -->
-        <image.publish.registry.password>${env.DOCKERHUB_TOKEN}</image.publish.registry.password>
-        <image.publish.registry.token></image.publish.registry.token>
     </properties>
 
     <build>
         <pluginManagement>
             <plugins>
-                <!-- Attaches spring-boot:build-image to the package phase with skip=true by default,
-                     use -Pimage-build or -Pimage-publish to activate the execution -->
+                <!-- Attaches spring-boot:build-image to the package phase with skip=true and publish=false by default -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
@@ -86,24 +79,31 @@
                 <image.skip>false</image.skip>
             </properties>
         </profile>
-        <!-- Build images and publish -->
+        <!-- Publish to Docker Hub -->
         <profile>
-            <id>publish-image</id>
+            <id>docker-hub</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <image.skip>false</image.skip>
                 <image.publish>true</image.publish>
+                <image.name>docker.io/bbende/${project.artifactId}</image.name>
+                <image.publish.registry.url>https://index.docker.io/v1/</image.publish.registry.url>
+                <image.publish.registry.username>bbende</image.publish.registry.username>
+                <!--suppress UnresolvedMavenProperty -->
+                <image.publish.registry.password>${env.DOCKERHUB_TOKEN}</image.publish.registry.password>
             </properties>
         </profile>
-        <!-- Use GitHub Container Registry -->
+        <!-- Publish to GitHub Packages -->
         <profile>
-            <id>github-packages</id>
+            <id>github</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
+                <image.skip>false</image.skip>
+                <image.publish>true</image.publish>
                 <image.name>ghcr.io/bbende/${project.artifactId}</image.name>
                 <image.publish.registry.url>https://ghcr.io</image.publish.registry.url>
                 <image.publish.registry.username>bbende</image.publish.registry.username>
@@ -111,18 +111,37 @@
                 <image.publish.registry.password>${env.GITHUB_PACKAGES_TOKEN}</image.publish.registry.password>
             </properties>
         </profile>
-        <!-- Use Azure Container Registry -->
+        <!-- Publish to Azure Container Registry -->
         <profile>
-            <id>azure</id>
+            <id>acr</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
+                <image.skip>false</image.skip>
+                <image.publish>true</image.publish>
                 <image.name>bbende.azurecr.io/${project.artifactId}</image.name>
                 <image.publish.registry.url>https://bbende.azurecr.io</image.publish.registry.url>
                 <image.publish.registry.username>bbende</image.publish.registry.username>
                 <!--suppress UnresolvedMavenProperty -->
                 <image.publish.registry.password>${env.ACR_ADMIN_PASSWORD}</image.publish.registry.password>
+            </properties>
+        </profile>
+        <!-- Publish to Google Container Registry -->
+        <profile>
+            <id>gcr</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <gcp.project.id>spartan-buckeye-308802</gcp.project.id>
+                <image.skip>false</image.skip>
+                <image.publish>true</image.publish>
+                <image.name>gcr.io/${gcp.project.id}/${project.artifactId}</image.name>
+                <image.publish.registry.url>https://gcr.io</image.publish.registry.url>
+                <image.publish.registry.username>_json_key</image.publish.registry.username>
+                <!--suppress UnresolvedMavenProperty -->
+                <image.publish.registry.password>${env.GOOGLE_JSON_KEY}</image.publish.registry.password>
             </properties>
         </profile>
     </profiles>
