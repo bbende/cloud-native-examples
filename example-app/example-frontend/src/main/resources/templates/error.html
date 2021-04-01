@@ -2,11 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Error</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <th:block th:include="general.html :: head"></th:block>
 </head>
 <body>
-    <h1>ERROR</h1>
-    <p th:text="${error}" />
-    <a href="/"><< Home</a>
+    <div class="container">
+        <h1>ERROR</h1>
+        <p th:text="${error}" />
+        <a href="/"><< Home</a>
+    </div>
 </body>
 </html>
