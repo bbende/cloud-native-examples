@@ -27,6 +27,9 @@
         <image.publish>false</image.publish>
         <image.name>${project.artifactId}</image.name>
         <image.tag>${project.version}</image.tag>
+        <image.publish.registry.url></image.publish.registry.url>
+        <image.publish.registry.username></image.publish.registry.username>
+        <image.publish.registry.password></image.publish.registry.password>
     </properties>
 
     <build>
@@ -57,7 +60,6 @@
                                         <url>${image.publish.registry.url}</url>
                                         <username>${image.publish.registry.username}</username>
                                         <password>${image.publish.registry.password}</password>
-                                        <token>${image.publish.registry.token}</token>
                                     </publishRegistry>
                                 </docker>
                             </configuration>
