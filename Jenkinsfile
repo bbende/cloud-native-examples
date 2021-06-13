@@ -13,7 +13,7 @@ pipeline {
         stage('Build') {
             steps {
                 container('maven') {
-                    sh "mvn package -Dimage.skip=false -Dimage.publish=true -Dimage.publish.registry.url=${REGISTRY_URL} -Dimage.publish.registry.username=${REGISTRY_CREDENTIAL_USR} -Dimage.publish.registry.password=${REGISTRY_CREDENTIAL_PSW}"
+                    sh 'mvn package -Dimage.skip=false -Dimage.publish=true -Dimage.publish.registry.url=$REGISTRY_URL -Dimage.publish.registry.username=$REGISTRY_CREDENTIAL_USR -Dimage.publish.registry.password=$REGISTRY_CREDENTIAL_PSW'
                 }
             }
         }
