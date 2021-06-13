@@ -12,3 +12,10 @@ spec:
           cpu: "500m"
         limits:
           memory: "1Gi"
+    - name: docker-daemon
+      image: docker:20.10.7-dind
+      env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+      securityContext:
+        privileged: true
