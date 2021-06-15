@@ -23,6 +23,7 @@
 
     <properties>
         <java.version>11</java.version>
+        <!-- spring-boot-maven properties -->
         <image.skip>true</image.skip>
         <image.publish>false</image.publish>
         <image.name>${project.artifactId}</image.name>
@@ -30,6 +31,17 @@
         <image.publish.registry.url></image.publish.registry.url>
         <image.publish.registry.username></image.publish.registry.username>
         <image.publish.registry.password></image.publish.registry.password>
+        <!-- jib properties -->
+        <jib-maven-plugin.version>3.1.1</jib-maven-plugin.version>
+        <jib-spring-boot-extension-maven.version>0.1.0</jib-spring-boot-extension-maven.version>
+        <jib.skip>true</jib.skip>
+        <jib.from.image>adoptopenjdk:11-jre-hotspot</jib.from.image>
+        <jib.registry.username></jib.registry.username>
+        <jib.registry.password></jib.registry.password>
+        <jib.image.prefix>docker.io/bbende</jib.image.prefix>
+        <jib.image.path>${jib.image.prefix}/${project.artifactId}</jib.image.path>
+        <jib.image.tag>${project.version}</jib.image.tag>
+        <jib.allow.insecure.registries>false</jib.allow.insecure.registries>
     </properties>
 
     <build>
@@ -66,12 +78,67 @@
                         </execution>
                     </executions>
                 </plugin>
+                <!-- Use jib as an alternative when building in an ARM environment -->
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>${jib-maven-plugin.version}</version>
+                    <!-- Use the jib spring-boot extensions to exclude dev tools
+                         See: https://github.com/GoogleContainerTools/jib/issues/2336 -->
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.google.cloud.tools</groupId>
+                            <artifactId>jib-spring-boot-extension-maven</artifactId>
+                            <version>${jib-spring-boot-extension-maven.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>jib-build</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                            <configuration>
+                                <skip>${jib.skip}</skip>
+                                <from>
+                                    <image>${jib.from.image}</image>
+                                </from>
+                                <to>
+                                    <image>${jib.image.path}</image>
+                                    <tags>
+                                        <tag>${jib.image.tag}</tag>
+                                    </tags>
+                                    <auth>
+                                        <username>${jib.registry.username}</username>
+                                        <password>${jib.registry.password}</password>
+                                    </auth>
+                                </to>
+                                <allowInsecureRegistries>${jib.allow.insecure.registries}</allowInsecureRegistries>
+                                <container>
+                                    <ports>
+                                        <port>8080</port>
+                                    </ports>
+                                    <environment>
+                                        <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
+                                    </environment>
+                                    <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                                </container>
+                                <pluginExtensions>
+                                    <pluginExtension>
+                                        <implementation>com.google.cloud.tools.jib.maven.extension.springboot.JibSpringBootExtension</implementation>
+                                    </pluginExtension>
+                                </pluginExtensions>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
 
     <profiles>
-        <!-- Build images, but don't publish -->
+        <!-- spring-boot-maven-plugin - Build images, but don't publish -->
         <profile>
             <id>build-image</id>
             <activation>
@@ -81,7 +148,7 @@
                 <image.skip>false</image.skip>
             </properties>
         </profile>
-        <!-- Publish to Docker Hub -->
+        <!-- spring-boot-maven-plugin - Publish to Docker Hub -->
         <profile>
             <id>docker-hub</id>
             <activation>
@@ -97,7 +164,7 @@
                 <image.publish.registry.password>${env.DOCKERHUB_TOKEN}</image.publish.registry.password>
             </properties>
         </profile>
-        <!-- Publish to GitHub Packages -->
+        <!-- spring-boot-maven-plugin - Publish to GitHub Packages -->
         <profile>
             <id>github</id>
             <activation>
@@ -113,7 +180,7 @@
                 <image.publish.registry.password>${env.GITHUB_PACKAGES_TOKEN}</image.publish.registry.password>
             </properties>
         </profile>
-        <!-- Publish to Azure Container Registry -->
+        <!-- spring-boot-maven-plugin - Publish to Azure Container Registry -->
         <profile>
             <id>acr</id>
             <activation>
@@ -129,7 +196,7 @@
                 <image.publish.registry.password>${env.ACR_ADMIN_PASSWORD}</image.publish.registry.password>
             </properties>
         </profile>
-        <!-- Publish to Google Container Registry -->
+        <!-- spring-boot-maven-plugin - Publish to Google Container Registry -->
         <profile>
             <id>gcr</id>
             <activation>
@@ -146,7 +213,7 @@
                 <image.publish.registry.password>${env.GOOGLE_JSON_KEY}</image.publish.registry.password>
             </properties>
         </profile>
-        <!-- Publish to AWS Elastic Container Registry -->
+        <!-- spring-boot-maven-plugin - Publish to AWS Elastic Container Registry -->
         <profile>
             <id>ecr</id>
             <activation>
@@ -162,6 +229,13 @@
                 <image.publish.registry.username>AWS</image.publish.registry.username>
                 <!--suppress UnresolvedMavenProperty -->
                 <image.publish.registry.password>${env.ECR_LOGIN_PASSWORD}</image.publish.registry.password>
+            </properties>
+        </profile>
+        <!-- jib-maven-plugin - activate jib -->
+        <profile>
+            <id>jib</id>
+            <properties>
+                <jib.skip>false</jib.skip>
             </properties>
         </profile>
     </profiles>
