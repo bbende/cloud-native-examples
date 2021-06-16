@@ -23,14 +23,6 @@
 
     <properties>
         <java.version>11</java.version>
-        <!-- spring-boot-maven properties -->
-        <image.skip>true</image.skip>
-        <image.publish>false</image.publish>
-        <image.name>${project.artifactId}</image.name>
-        <image.tag>${project.version}</image.tag>
-        <image.publish.registry.url></image.publish.registry.url>
-        <image.publish.registry.username></image.publish.registry.username>
-        <image.publish.registry.password></image.publish.registry.password>
         <!-- jib properties -->
         <jib-maven-plugin.version>3.1.1</jib-maven-plugin.version>
         <jib-spring-boot-extension-maven.version>0.1.0</jib-spring-boot-extension-maven.version>
@@ -42,42 +34,12 @@
         <jib.image.path>${jib.image.prefix}/${project.artifactId}</jib.image.path>
         <jib.image.tag>${project.version}</jib.image.tag>
         <jib.allow.insecure.registries>false</jib.allow.insecure.registries>
+        <jib.container.port>8080</jib.container.port>
     </properties>
 
     <build>
         <pluginManagement>
             <plugins>
-                <!-- Attaches spring-boot:build-image to the package phase with skip=true and publish=false by default -->
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>build-image</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>build-image</goal>
-                            </goals>
-                            <configuration>
-                                <skip>${image.skip}</skip>
-                                <image>
-                                    <name>${image.name}:${image.tag}</name>
-                                    <publish>${image.publish}</publish>
-                                    <env>
-                                        <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
-                                    </env>
-                                </image>
-                                <docker>
-                                    <publishRegistry>
-                                        <url>${image.publish.registry.url}</url>
-                                        <username>${image.publish.registry.username}</username>
-                                        <password>${image.publish.registry.password}</password>
-                                    </publishRegistry>
-                                </docker>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
                 <!-- Use jib as an alternative when building in an ARM environment -->
                 <plugin>
                     <groupId>com.google.cloud.tools</groupId>
@@ -117,7 +79,7 @@
                                 <allowInsecureRegistries>${jib.allow.insecure.registries}</allowInsecureRegistries>
                                 <container>
                                     <ports>
-                                        <port>8080</port>
+                                        <port>${jib.container.port}</port>
                                     </ports>
                                     <environment>
                                         <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
@@ -138,104 +100,22 @@
     </build>
 
     <profiles>
-        <!-- spring-boot-maven-plugin - Build images, but don't publish -->
-        <profile>
-            <id>build-image</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <image.skip>false</image.skip>
-            </properties>
-        </profile>
-        <!-- spring-boot-maven-plugin - Publish to Docker Hub -->
-        <profile>
-            <id>docker-hub</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <image.skip>false</image.skip>
-                <image.publish>true</image.publish>
-                <image.name>docker.io/bbende/${project.artifactId}</image.name>
-                <image.publish.registry.url>https://index.docker.io/v1/</image.publish.registry.url>
-                <image.publish.registry.username>bbende</image.publish.registry.username>
-                <!--suppress UnresolvedMavenProperty -->
-                <image.publish.registry.password>${env.DOCKERHUB_TOKEN}</image.publish.registry.password>
-            </properties>
-        </profile>
-        <!-- spring-boot-maven-plugin - Publish to GitHub Packages -->
-        <profile>
-            <id>github</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <image.skip>false</image.skip>
-                <image.publish>true</image.publish>
-                <image.name>ghcr.io/bbende/${project.artifactId}</image.name>
-                <image.publish.registry.url>https://ghcr.io</image.publish.registry.url>
-                <image.publish.registry.username>bbende</image.publish.registry.username>
-                <!--suppress UnresolvedMavenProperty -->
-                <image.publish.registry.password>${env.GITHUB_PACKAGES_TOKEN}</image.publish.registry.password>
-            </properties>
-        </profile>
-        <!-- spring-boot-maven-plugin - Publish to Azure Container Registry -->
-        <profile>
-            <id>acr</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <image.skip>false</image.skip>
-                <image.publish>true</image.publish>
-                <image.name>bbende.azurecr.io/${project.artifactId}</image.name>
-                <image.publish.registry.url>https://bbende.azurecr.io</image.publish.registry.url>
-                <image.publish.registry.username>bbende</image.publish.registry.username>
-                <!--suppress UnresolvedMavenProperty -->
-                <image.publish.registry.password>${env.ACR_ADMIN_PASSWORD}</image.publish.registry.password>
-            </properties>
-        </profile>
-        <!-- spring-boot-maven-plugin - Publish to Google Container Registry -->
-        <profile>
-            <id>gcr</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <gcp.project.id>spartan-buckeye-308802</gcp.project.id>
-                <image.skip>false</image.skip>
-                <image.publish>true</image.publish>
-                <image.name>gcr.io/${gcp.project.id}/${project.artifactId}</image.name>
-                <image.publish.registry.url>https://gcr.io</image.publish.registry.url>
-                <image.publish.registry.username>_json_key</image.publish.registry.username>
-                <!--suppress UnresolvedMavenProperty -->
-                <image.publish.registry.password>${env.GOOGLE_JSON_KEY}</image.publish.registry.password>
-            </properties>
-        </profile>
-        <!-- spring-boot-maven-plugin - Publish to AWS Elastic Container Registry -->
-        <profile>
-            <id>ecr</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <!-- Update to custom alias once approved -->
-                <ecr.registry.id>e5j7l2s3</ecr.registry.id>
-                <image.skip>false</image.skip>
-                <image.publish>true</image.publish>
-                <image.name>public.ecr.aws/${ecr.registry.id}/${project.artifactId}</image.name>
-                <image.publish.registry.url>https://public.ecr.aws</image.publish.registry.url>
-                <image.publish.registry.username>AWS</image.publish.registry.username>
-                <!--suppress UnresolvedMavenProperty -->
-                <image.publish.registry.password>${env.ECR_LOGIN_PASSWORD}</image.publish.registry.password>
-            </properties>
-        </profile>
         <!-- jib-maven-plugin - activate jib -->
         <profile>
             <id>jib</id>
             <properties>
                 <jib.skip>false</jib.skip>
+            </properties>
+        </profile>
+        <!-- jib-maven-plugin - activate jib for private k3s -->
+        <profile>
+            <id>jib-k3s-private</id>
+            <properties>
+                <jib.skip>false</jib.skip>
+                <jib.from.image>adoptopenjdk:11-jre-hotspot@sha256:15bfed0c4af7307047b810f144a86b3c57a72f531c0f6b03bb7afb39ec286678</jib.from.image>
+                <jib.image.prefix>docker-registry-service.docker-registry.svc.cluster.local:5000</jib.image.prefix>
+                <jib.image.tag>${project.version}</jib.image.tag>
+                <jib.allow.insecure.registries>true</jib.allow.insecure.registries>
             </properties>
         </profile>
     </profiles>

@@ -12,6 +12,10 @@
 	<name>Example App Frontend</name>
 	<description>The frontend of the example app</description>
 
+	<properties>
+		<jib.container.port>8080</jib.container.port>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
