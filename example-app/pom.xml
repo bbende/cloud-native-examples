@@ -114,7 +114,7 @@
                 <jib.skip>false</jib.skip>
                 <jib.from.image>adoptopenjdk:11-jre-hotspot@sha256:15bfed0c4af7307047b810f144a86b3c57a72f531c0f6b03bb7afb39ec286678</jib.from.image>
                 <jib.image.prefix>docker-registry-service.docker-registry.svc.cluster.local:5000</jib.image.prefix>
-                <jib.image.tag>${project.version}</jib.image.tag>
+                <jib.image.tag>${project.version}-k3s</jib.image.tag>
                 <jib.allow.insecure.registries>true</jib.allow.insecure.registries>
             </properties>
         </profile>
