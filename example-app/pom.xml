@@ -27,11 +27,12 @@
         <jib-maven-plugin.version>3.1.1</jib-maven-plugin.version>
         <jib-spring-boot-extension-maven.version>0.1.0</jib-spring-boot-extension-maven.version>
         <jib.skip>true</jib.skip>
+        <jib.goal>build</jib.goal>
         <jib.from.image>adoptopenjdk:11-jre-hotspot</jib.from.image>
         <jib.registry.username></jib.registry.username>
         <jib.registry.password></jib.registry.password>
-        <jib.image.prefix>docker.io/bbende</jib.image.prefix>
-        <jib.image.path>${jib.image.prefix}/${project.artifactId}</jib.image.path>
+        <jib.image.prefix>docker.io/bbende/</jib.image.prefix>
+        <jib.image.path>${jib.image.prefix}${project.artifactId}</jib.image.path>
         <jib.image.tag>${project.version}</jib.image.tag>
         <jib.allow.insecure.registries>false</jib.allow.insecure.registries>
         <jib.container.port>8080</jib.container.port>
@@ -59,7 +60,7 @@
                             <id>jib-build</id>
                             <phase>package</phase>
                             <goals>
-                                <goal>build</goal>
+                                <goal>${jib.goal}</goal>
                             </goals>
                             <configuration>
                                 <skip>${jib.skip}</skip>
@@ -100,20 +101,32 @@
     </build>
 
     <profiles>
-        <!-- jib-maven-plugin - activate jib -->
+        <!-- activate jib-maven-plugin for local docker daemon  -->
         <profile>
-            <id>jib</id>
+            <id>jib-docker-daemon</id>
             <properties>
                 <jib.skip>false</jib.skip>
+                <jib.goal>dockerBuild</jib.goal>
+                <jib.image.prefix></jib.image.prefix>
             </properties>
         </profile>
-        <!-- jib-maven-plugin - activate jib for private k3s -->
+        <!-- activate jib-maven-plugin for docker hub  -->
+        <profile>
+            <id>jib-docker-hub</id>
+            <properties>
+                <jib.skip>false</jib.skip>
+                <jib.goal>build</jib.goal>
+                <jib.image.prefix>docker.io/bbende/</jib.image.prefix>
+            </properties>
+        </profile>
+        <!-- activate jib-maven-plugin for private k3s registry -->
         <profile>
             <id>jib-k3s-private</id>
             <properties>
                 <jib.skip>false</jib.skip>
+                <jib.goal>build</jib.goal>
                 <jib.from.image>adoptopenjdk:11-jre-hotspot@sha256:15bfed0c4af7307047b810f144a86b3c57a72f531c0f6b03bb7afb39ec286678</jib.from.image>
-                <jib.image.prefix>docker-registry-service.docker-registry.svc.cluster.local:5000</jib.image.prefix>
+                <jib.image.prefix>docker-registry-service.docker-registry.svc.cluster.local:5000/</jib.image.prefix>
                 <jib.image.tag>${project.version}-k3s</jib.image.tag>
                 <jib.allow.insecure.registries>true</jib.allow.insecure.registries>
             </properties>
