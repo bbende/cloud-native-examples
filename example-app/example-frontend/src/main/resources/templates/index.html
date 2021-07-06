@@ -11,6 +11,7 @@
             <li th:each="message: ${messages}" th:text="${message.text}" />
         </ul>
         <a href="#" th:href="@{/messages/new}" role="button">New Message</a>
+        <p>Built: <span th:text="${buildTimestamp}"></span></p>
     </div>
 </body>
 </html>
