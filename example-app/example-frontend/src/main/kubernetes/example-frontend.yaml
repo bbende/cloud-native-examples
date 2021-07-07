@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: example-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-frontend
+  namespace: example-app
+  labels:
+    app: example-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example-frontend
+  template:
+    metadata:
+      labels:
+        app: example-frontend
+    spec:
+      containers:
+        - name: example-frontend
+          image: docker.registry.private/example-frontend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: EXAMPLE_APP_BACKEND_SERVER_HOST
+              value: example-backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-frontend
+  namespace: example-app
+spec:
+  selector:
+    app: example-frontend
+  ports:
+    - protocol: TCP
+      port: 8080
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: example-frontend
+  namespace: example-app
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: example-app
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: example-frontend
+                port:
+                  number: 8080

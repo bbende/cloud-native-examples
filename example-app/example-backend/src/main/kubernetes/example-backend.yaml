@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: example-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-backend
+  namespace: example-app
+  labels:
+    app: example-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example-backend
+  template:
+    metadata:
+      labels:
+        app: example-backend
+    spec:
+      containers:
+        - name: example-backend
+          image: docker.registry.private/example-backend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-backend
+  namespace: example-app
+spec:
+  selector:
+    app: example-backend
+  ports:
+    - protocol: TCP
+      port: 8081
