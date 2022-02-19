@@ -5,13 +5,20 @@
     <th:block th:include="general.html :: head"></th:block>
 </head>
 <body>
-    <div class="container">
-        <h1>Messages</h1>
-        <ul>
-            <li th:each="message: ${messages}" th:text="${message.text}" />
-        </ul>
-        <a href="#" th:href="@{/messages/new}" role="button">New Message</a>
-        <p>Built: <span th:text="${buildTimestamp}"></span></p>
-    </div>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Example</a>
+        </div>
+    </nav>
+    <main role="main" class="container">
+        <div class="container">
+            <h1>Messages</h1>
+            <ul>
+                <li th:each="message: ${messages}" th:text="${message.text}" />
+            </ul>
+            <a href="#" th:href="@{/messages/new}" role="button">New Message</a>
+            <p>Built: <span th:text="${buildTimestamp}"></span></p>
+        </div>
+    </main>
 </body>
 </html>
